@@ -14,7 +14,6 @@ const Registration = () => {
         setIsLoading(true);
         setError('');
 
-        // Client-side validation
         if (!username || !password) {
             setError('Username and password are required');
             setIsLoading(false);
@@ -32,9 +31,8 @@ const Registration = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                // Optionally handle successful registration (e.g., redirect to login)
                 console.log('Registration successful:', data);
-                navigate('/login'); // Redirect to login page after successful registration
+                navigate('/login');
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Registration failed');
@@ -48,26 +46,36 @@ const Registration = () => {
     };
 
     return (
-        <MDBContainer>
-            <form onSubmit={handleRegistration}>
-                <MDBInput
-                    label='Username'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <MDBInput
-                    label='Password'
-                    type='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                {error && <div className="text-danger">{error}</div>}
-                <MDBBtn type="submit" disabled={isLoading}>
-                    {isLoading ? 'Registering...' : 'Register'}
-                </MDBBtn>
-            </form>
+        <MDBContainer className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+            <div className="p-3 w-50">
+                <form onSubmit={handleRegistration} >
+                <div>
+                    <h4>Register for a new account today! </h4> 
+                </div>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        required
+                        
+                    />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        required
+                   
+                    />
+                    {error && <div className="text-danger">{error}</div>}
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Registering...' : 'Register'}
+                    </button>
+                </form>
+                
+            </div>
         </MDBContainer>
     );
 };
-
 export default Registration;
