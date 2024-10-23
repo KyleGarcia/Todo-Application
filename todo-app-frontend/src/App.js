@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import Registration from './Registration';
 import Tasks from './Tasks';
-import CreateTask from './CreateTask'; // Import CreateTask
-import { MDBContainer } from 'mdb-react-ui-kit'; // Adjust if needed for your styling
+import CreateTask from './CreateTask'; 
+import { MDBContainer } from 'mdb-react-ui-kit'; 
 
 // Home Component
 const Home = () => <div>Welcome to the Todo App!</div>;
@@ -93,7 +93,7 @@ function App() {
     }, []);
 
     return (
-       
+        <div className="code-wrapper">
             <div>
                 <h1>My Todo App</h1>
                 <nav>
@@ -117,7 +117,7 @@ function App() {
                     <Route path="/tasks" element={<Tasks />} />
                 </Routes>
             </div>
-        
+        </div>
     );
 }
 

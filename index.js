@@ -10,7 +10,7 @@ const categoriesRoutes = require('./routes/categories'); // Import categories ro
 
 // Enable cors for server interaction
 app.use(cors({
-  origin: 'http://localhost:3002', 
+  origin: 'http://localhost:3001', 
 
 }));
 

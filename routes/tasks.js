@@ -5,7 +5,7 @@ const authenticateJWT = require('./middlewares/authMiddleware');
 
 // Create a new task
 router.post('/', authenticateJWT, async (req, res) => {
-    const { title, completed = false, category_id } = req.body; // Remove description
+    const { title, completed = false, category_id } = req.body; 
     const user_id = req.user.id; // Extract user ID from the authenticated request
 
     // Validate required fields

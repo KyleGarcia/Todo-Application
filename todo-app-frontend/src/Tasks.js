@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import CreateTask from './CreateTask'; // Ensure this import is present
+import CreateTask from './CreateTask';
 
-const Tasks = ({ userId }) => {
+const Tasks = ({ userId, username }) => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState('');
 
@@ -34,7 +34,7 @@ const Tasks = ({ userId }) => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ completed: true }), // Send completed status
+                body: JSON.stringify({ completed: true }),
             });
             if (!response.ok) {
                 throw new Error('Failed to update task');
@@ -45,7 +45,6 @@ const Tasks = ({ userId }) => {
             console.error('Error marking task as completed:', err);
         }
     };
-    
 
     const deleteTask = async (taskId) => {
         const token = localStorage.getItem('token');
@@ -73,12 +72,12 @@ const Tasks = ({ userId }) => {
 
     return (
         <div>
-            <h2>Your Tasks</h2>
+            <h2>{username} Tasks</h2>
             {error && <div className="text-danger">{error}</div>}
             <CreateTask userId={userId} addTask={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
-            <ul>
+            <div>
                 {tasks.map((task) => (
-                    <li key={task.id}>
+                    <div className="task" key={task.id}>
                         <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
                             {task.title}
                         </span>
@@ -86,10 +85,9 @@ const Tasks = ({ userId }) => {
                             {task.completed ? 'Completed' : 'Mark as Completed'}
                         </button>
                         <button onClick={() => deleteTask(task.id)}>Delete</button>
-                    </li>
+                    </div>
                 ))}
-            </ul>
-
+            </div>
         </div>
     );
 };
