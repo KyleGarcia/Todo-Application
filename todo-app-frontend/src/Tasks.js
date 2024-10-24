@@ -72,7 +72,7 @@ const Tasks = ({ userId, username }) => {
 
     return (
         <div>
-            <h2>{username} Tasks</h2>
+            <h2> {username}'s Tasks</h2>
             {error && <div className="text-danger">{error}</div>}
             <CreateTask userId={userId} addTask={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
             <div>
@@ -87,7 +87,9 @@ const Tasks = ({ userId, username }) => {
                         <button onClick={() => deleteTask(task.id)}>Delete</button>
                     </div>
                 ))}
+                
             </div>
+            <h3> End of Task List</h3>
         </div>
     );
 };

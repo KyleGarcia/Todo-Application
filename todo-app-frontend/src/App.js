@@ -3,82 +3,17 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import Registration from './Registration';
 import Tasks from './Tasks';
-import CreateTask from './CreateTask'; 
-import { MDBContainer } from 'mdb-react-ui-kit'; 
+import Login from './Login';
+//import CreateTask from './CreateTask'; Delete Later
+//import { MDBContainer } from 'mdb-react-ui-kit';  Delete later
 
 // Home Component
-const Home = () => <div>Welcome to the Todo App!</div>;
+const Home = () => <div>Welcome to the Todo Application!</div>;
 
-const Login = ({ setIsAuthenticated }) => {
-    const [identifier, setIdentifier] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
-
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        try {
-            const response = await fetch('http://localhost:3000/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: identifier, password }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                setIsAuthenticated(true);
-                navigate('/tasks');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.message || 'Login failed');
-            }
-        } catch (error) {
-            setError('Error during login');
-            console.error('Error during login:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <MDBContainer className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-            <div className="p-3 w-50">
-                <form onSubmit={handleLogin}>
-                    <input
-                        type="text"
-                        value={identifier}
-                        onChange={(e) => setIdentifier(e.target.value)}
-                        placeholder="Email or Username"
-                        required
-                    />
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Password"
-                        required
-                    />
-                    {error && <div className="text-danger">{error}</div>}
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Signing in...' : 'Sign in'}
-                    </button>
-                </form>
-                <div>
-                    <p>Not a member? <Link to="/register">Register</Link></p>
-                </div>
-            </div>
-        </MDBContainer>
-    );
-};
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [username, setUsername] = useState('');
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -89,9 +24,13 @@ function App() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const storedUsername = localStorage.getItem('username'); 
         setIsAuthenticated(!!token);
+        if (storedUsername) {
+            setUsername(storedUsername);
+        }
     }, []);
-
+    console.log('Username:', username);
     return (
         <div className="code-wrapper">
             <div>
@@ -110,11 +49,12 @@ function App() {
                         </>
                     )}
                 </nav>
+                
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                    <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
                     <Route path="/register" element={<Registration />} />
-                    <Route path="/tasks" element={<Tasks />} />
+                    <Route path="/tasks" element={<Tasks username={username}  />} />
                 </Routes>
             </div>
         </div>
