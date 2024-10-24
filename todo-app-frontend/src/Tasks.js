@@ -40,12 +40,20 @@ const Tasks = ({ userId, username }) => {
             if (!response.ok) {
                 throw new Error('Failed to update task');
             }
-            fetchTasks(); // Refresh task list
+            
+            // Update the local tasks state without refetching
+            setTasks((prevTasks) =>
+                prevTasks.map((task) =>
+                    task.id === taskId ? { ...task, completed: true } : task
+                )
+            );
+    
         } catch (err) {
             setError(err.message);
             console.error('Error marking task as completed:', err);
         }
     };
+    
 
     const deleteTask = async (taskId) => {
         const token = localStorage.getItem('token');
@@ -71,13 +79,23 @@ const Tasks = ({ userId, username }) => {
         fetchTasks();
     }, []);
 
+    // Group tasks by completion status
+    const groupedTasks = {
+        completed: tasks.filter(task => task.completed),
+        incomplete: tasks.filter(task => !task.completed),
+    };
+
+    console.log('username:', username);
     return (
         <div>
-            <h2> {username}'s Tasks</h2>
+            <h2>{username}'s Tasks</h2>
             {error && <div className="text-danger">{error}</div>}
             <CreateTask userId={userId} addTask={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
+            
+            {/* Render incomplete tasks first */}
             <div>
-                {tasks.map((task) => (
+                <h3>Incomplete Tasks</h3>
+                {groupedTasks.incomplete.map((task) => (
                     <div className="task" key={task.id}>
                         <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
                             {task.title}
@@ -88,9 +106,24 @@ const Tasks = ({ userId, username }) => {
                         <button onClick={() => deleteTask(task.id)}>Delete</button>
                     </div>
                 ))}
-                
             </div>
-            <h3> End of Task List</h3>
+
+            <div>
+                <h3>Completed Tasks</h3>
+                {groupedTasks.completed.map((task) => (
+                    <div className="task" key={task.id}>
+                        <span style={{ textDecoration: 'line-through' }}>
+                            {task.title}
+                        </span>
+                        <button onClick={() => markAsCompleted(task.id)} disabled>
+                            Completed
+                        </button>
+                        <button onClick={() => deleteTask(task.id)}>Delete</button>
+                    </div>
+                ))}
+            </div>
+
+            <h3>End of Task List</h3>
         </div>
     );
 };

@@ -4,8 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react
 import Registration from './Registration';
 import Tasks from './Tasks';
 import Login from './Login';
-//import CreateTask from './CreateTask'; Delete Later
-//import { MDBContainer } from 'mdb-react-ui-kit';  Delete later
+
 
 // Home Component
 const Home = () => <div>Welcome to the Todo Application!</div>;
