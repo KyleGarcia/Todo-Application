@@ -1,3 +1,4 @@
+// Manages the Task Creation 
 import React, { useState } from 'react';
 
 const CreateTask = ({ userId, addTask }) => {
@@ -60,9 +61,9 @@ const CreateTask = ({ userId, addTask }) => {
                 value={category}
                 onChange={(e) => setCategory(Number(e.target.value))} // Convert to number
             >
-                <option value="1">Category 1</option>
-                <option value="2">Category 2</option>
-                <option value="3">Category 3</option>
+                <option value="1">Work</option>
+                <option value="2">Personal</option>
+                <option value="3">Urgent</option>
             </select>
             <button type="submit">Add Task</button>
             {error && <div className="text-danger">{error}</div>}

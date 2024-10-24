@@ -1,3 +1,4 @@
+// Manages display and functionality of tasks
 import React, { useEffect, useState } from 'react';
 import CreateTask from './CreateTask';
 
