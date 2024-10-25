@@ -1,8 +1,7 @@
-// Manages display and functionality of tasks
 import React, { useEffect, useState } from 'react';
 import CreateTask from './CreateTask';
 
-const Tasks = ({ userId, username }) => {
+const Tasks = ({ userId, username, handleLogout }) => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState('');
 
@@ -15,9 +14,19 @@ const Tasks = ({ userId, username }) => {
                     'Content-Type': 'application/json',
                 },
             });
+
             if (!response.ok) {
+                if (response.status === 401) {
+                    const errorData = await response.json();
+                    if (errorData.error === 'Token expired or invalid') {
+                        handleLogout(); // Call logout function on token expiration
+                        setError('Your session has expired. Please log in again to continue.');
+                        return; // Exit early
+                    }
+                }
                 throw new Error('Failed to fetch tasks');
             }
+
             const data = await response.json();
             setTasks(data.tasks);
         } catch (err) {
@@ -47,13 +56,11 @@ const Tasks = ({ userId, username }) => {
                     task.id === taskId ? { ...task, completed: true } : task
                 )
             );
-    
         } catch (err) {
             setError(err.message);
             console.error('Error marking task as completed:', err);
         }
     };
-    
 
     const deleteTask = async (taskId) => {
         const token = localStorage.getItem('token');
@@ -85,14 +92,12 @@ const Tasks = ({ userId, username }) => {
         incomplete: tasks.filter(task => !task.completed),
     };
 
-    console.log('username:', username);
     return (
         <div>
             <h2>{username}'s Tasks</h2>
             {error && <div className="text-danger">{error}</div>}
             <CreateTask userId={userId} addTask={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
             
-            {/* Render incomplete tasks first */}
             <div>
                 <h3>Incomplete Tasks</h3>
                 {groupedTasks.incomplete.map((task) => (

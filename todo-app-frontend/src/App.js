@@ -53,7 +53,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
                     <Route path="/register" element={<Registration />} />
-                    <Route path="/tasks" element={<Tasks username={username}  />} />
+                    <Route path="/tasks" element={<Tasks username={username} handleLogout={handleLogout} />} />
                 </Routes>
             </div>
         </div>
