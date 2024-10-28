@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 const CreateTask = ({ userId, addTask }) => {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState(1); // Default category as a number
+    const [description, setDescription] = useState(''); // Description optional
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
@@ -15,7 +16,7 @@ const CreateTask = ({ userId, addTask }) => {
         }
     
         const token = localStorage.getItem('token');
-        console.log("Request Body:", { title, category_id: category, completed: false }); // Log the body
+        console.log("Request Body:", { title, category_id: category, completed: false, description }); // Log the body
     
         try {
             const response = await fetch('http://localhost:3000/api/tasks', {
@@ -27,7 +28,8 @@ const CreateTask = ({ userId, addTask }) => {
                 body: JSON.stringify({ 
                     title, 
                     category_id: category, // Ensure this is a number
-                    completed: false  // Add completed field
+                    completed: false,  // Add completed field
+                    description, // Include description
                 }),
             });
     
@@ -41,6 +43,7 @@ const CreateTask = ({ userId, addTask }) => {
             addTask(newTask); // Update the task list
             setTitle(''); // Clear input
             setCategory(1); // Reset to default category
+            setDescription(''); // Clear description field
             setError(''); // Reset error
         } catch (error) {
             setError(error.message);
@@ -65,6 +68,12 @@ const CreateTask = ({ userId, addTask }) => {
                 <option value="2">Personal</option>
                 <option value="3">Urgent</option>
             </select>
+            {/* Adding an optional description field need to update sizing in css*/}
+            <textarea div class="description-box"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter task description (optional)"
+            />
             <button type="submit">Add Task</button>
             {error && <div className="text-danger">{error}</div>}
         </form>

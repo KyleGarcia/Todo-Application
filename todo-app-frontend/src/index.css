@@ -49,9 +49,24 @@ code {
   padding: 10px;          
   background-color: #f9f9f9; 
   border-radius: 5px;     
-  display: flex;          
-  justify-content: space-between; 
-  align-items: center;    
+  display: block; 
 }
 
+.task-header {
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px; /* Space between header and details */
+}
 
+.task-details {
+  margin-top: 10px; 
+  font-size: 0.9em;
+  color: #555;
+}
+
+.description-box {
+  border-radius: 5px;
+  
+  
+}

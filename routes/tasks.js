@@ -5,7 +5,7 @@ const authenticateJWT = require('./middlewares/authMiddleware');
 
 // Create a new task
 router.post('/', authenticateJWT, async (req, res) => {
-    const { title, completed = false, category_id } = req.body; 
+    const { title, completed = false, category_id, description } = req.body; 
     const user_id = req.user.id; // Extract user ID from the authenticated request
 
     // Validate required fields
@@ -18,8 +18,8 @@ router.post('/', authenticateJWT, async (req, res) => {
 
     try {
         const result = await pool.query(
-            'INSERT INTO tasks (user_id, title, completed, category_id) VALUES ($1, $2, $3, $4) RETURNING *',
-            [user_id, title, completed, category_id] // Remove description from parameters
+            'INSERT INTO tasks (user_id, title, completed, category_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [user_id, title, completed, category_id, description]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -27,6 +27,7 @@ router.post('/', authenticateJWT, async (req, res) => {
         res.status(500).json({ error: 'Server error', details: err.message });
     }
 });
+
 
 // Get Tasks for authenticated user with pagination
 router.get('/', authenticateJWT, async (req, res) => {
@@ -38,8 +39,8 @@ router.get('/', authenticateJWT, async (req, res) => {
     const offset = (page - 1) * limit;
 
     try {
-        // Base query
-        let query = 'SELECT * FROM tasks WHERE user_id = $1';
+        // Base query - include description
+        let query = 'SELECT id, title, completed, category_id, description, created_at FROM tasks WHERE user_id = $1'; // Added description
         const values = [user_id];
 
         // Conditional filters
@@ -67,13 +68,15 @@ router.get('/', authenticateJWT, async (req, res) => {
             totalTasks,
             totalPages: Math.ceil(totalTasks / limit),
             currentPage: page,
-            tasks: result.rows,
+            tasks: result.rows, // created_at and description added
         });
     } catch (err) {
         console.error('Error in GET tasks:', err); // Log error
         res.status(500).json({ error: 'Server error', details: err.message }); // Send error details
     }
 });
+
+
 
 // Update Task
 router.put('/:id', authenticateJWT, async (req, res) => {

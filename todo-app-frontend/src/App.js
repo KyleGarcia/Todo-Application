@@ -17,7 +17,9 @@ function App() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('username');
         setIsAuthenticated(false);
+        setUsername(''); //reset username state
         navigate('/login');
     };
 

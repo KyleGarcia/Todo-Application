@@ -1,5 +1,5 @@
+import { MDBContainer } from 'mdb-react-ui-kit';
 import React, { useState } from 'react';
-import { MDBContainer, MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 const Registration = () => {
@@ -48,10 +48,10 @@ const Registration = () => {
     return (
         <MDBContainer className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
             <div className="p-3 w-50">
+
+            <h4>Register for a new account today!</h4> 
+            
                 <form onSubmit={handleRegistration} >
-                <div>
-                    <h4>Register for a new account today! </h4> 
-                </div>
                     <input
                         type="text"
                         value={username}
