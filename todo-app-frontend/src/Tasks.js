@@ -90,6 +90,19 @@ const Tasks = ({ userId, username, handleLogout }) => {
         }
     };
 
+    const getCategoryname = (category_id) => {
+        switch (category_id) {
+            case 1:
+                return 'Work';
+            case 2:
+                return 'Personal';
+            case 3:
+                return 'Urgent';
+            default:
+                return 'unkown';
+        }
+    };
+
     // Group tasks by completion status
     const groupedTasks = {
         completed: tasks.filter(task => task.completed),
@@ -121,6 +134,7 @@ const Tasks = ({ userId, username, handleLogout }) => {
                             </div>
                         </div>
                         <div className="task-details">
+                            <h5>Category: {getCategoryname(task.category_id)} </h5>
                             <h5>Created At: {new Date(task.created_at).toLocaleString()}</h5>
                             <h6>Description: {task.description || 'No description provided.'}</h6>
                         </div>
@@ -144,6 +158,7 @@ const Tasks = ({ userId, username, handleLogout }) => {
                             </div>
                         </div>
                         <div className="task-details">
+                            <h5>Category: {getCategoryname(task.category_id)} </h5>
                             <h5>Created At: {new Date(task.created_at).toLocaleString()}</h5>
                             <h6>Description: {task.description || 'No description provided.'}</h6>
                         </div>

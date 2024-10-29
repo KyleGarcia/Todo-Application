@@ -52,32 +52,40 @@ const CreateTask = ({ userId, addTask }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Task Title"
-                required
-            />
-            <select
-                value={category}
-                onChange={(e) => setCategory(Number(e.target.value))} // Convert to number
-            >
-                <option value="1">Work</option>
-                <option value="2">Personal</option>
-                <option value="3">Urgent</option>
-            </select>
-            {/* Adding an optional description field need to update sizing in css*/}
-            <textarea div class="description-box"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter task description (optional)"
-            />
-            <button type="submit">Add Task</button>
-            {error && <div className="text-danger">{error}</div>}
-        </form>
+        <div>
+            <form onSubmit={handleSubmit} className="create-task-form">
+                <h3>Title:</h3>
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Task Title"
+                    required
+                />
+                
+                <h3>Type:</h3>
+                <select
+                    value={category}
+                    onChange={(e) => setCategory(Number(e.target.value))}
+                >
+                    <option value="1">Work</option>
+                    <option value="2">Personal</option>
+                    <option value="3">Urgent</option>
+                </select>
+                
+                <h3>Description:</h3>
+                <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter task description (optional)"
+                />
+                
+                <button type="submit">Add Task</button>
+                {error && <div className="text-danger">{error}</div>}
+            </form>
+        </div>
     );
+
 };
 
 export default CreateTask;
