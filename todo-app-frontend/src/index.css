@@ -107,3 +107,56 @@ code {
   resize: none;
   height: 80px; 
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  padding: 20px; /* Add padding for better spacing */
+  max-width: 400px; /* Set a max width */
+  margin: auto; /* Center the modal */
+  background: white; /* Ensure the background is white */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.modal h3 {
+  margin-top: 0;
+}
+
+.modal button {
+  margin-right: 10px; /* Space between buttons */
+  padding: 8px 12px; /* Adjust button padding for size */
+  height: auto; /* Let height adjust to content */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Slightly rounded corners */
+  background-color: #007bff; /* Button color */
+  color: white; /* Text color */
+  cursor: pointer; /* Change cursor on hover */
+  transition: background-color 0.3s; /* Smooth background change */
+}
+
+.modal button:hover {
+  background-color: #0056b3; /* Darken on hover */
+}
+
+.modal button:last-child {
+  background-color: #dc3545; /* Cancel button color */
+}
+
+.modal button:last-child:hover {
+  background-color: #c82333; /* Darken cancel button on hover */
+}
+
+.modal textarea {
+  resize: none; /* Disable resizing if desired */
+}
