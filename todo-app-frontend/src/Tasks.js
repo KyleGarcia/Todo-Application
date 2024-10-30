@@ -230,7 +230,7 @@ const Tasks = ({ userId, username, handleLogout }) => {
                                 onChange={(e) => setEditTask({ ...editTask, description: e.target.value })}
                                 placeholder="Enter task description (optional)"
                             />
-                            <button type="submit">Save Changes</button>
+                            <button type="submit">Save</button>
                             <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
                         </form>
                     </div>

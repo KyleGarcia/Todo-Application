@@ -19,7 +19,7 @@ function App() {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         setIsAuthenticated(false);
-        setUsername(''); //reset username state
+        setUsername(''); 
         navigate('/login');
     };
 
