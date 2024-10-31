@@ -66,6 +66,7 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
                 </form>
                 <div>
                     <p>Not a member? <Link to="/register">Register</Link></p>
+                    <p>Forgot Password? <Link to="/password">Recover Password</Link></p>
                 </div>
             </div>
         </MDBContainer>

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const Registration = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState(''); //adding email requirement
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -14,8 +15,8 @@ const Registration = () => {
         setIsLoading(true);
         setError('');
 
-        if (!username || !password) {
-            setError('Username and password are required');
+        if (!username || !password || !email) {
+            setError('Username, password and email are required');
             setIsLoading(false);
             return;
         }
@@ -26,7 +27,7 @@ const Registration = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, email }),
             });
 
             if (response.ok) {
@@ -59,6 +60,13 @@ const Registration = () => {
                         placeholder="Username"
                         required
                         
+                    />
+                    <input
+                        type="email"
+                        value={email}//bind email state
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        required 
                     />
                     <input
                         type="password"
