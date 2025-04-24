@@ -5,7 +5,7 @@ const authenticateJWT = require('./middlewares/authMiddleware');
 
 // Create a new task
 router.post('/', authenticateJWT, async (req, res) => {
-    const { title, completed = false, category_id, description } = req.body; 
+    const { title, completed = false, category_id, description, is_daily } = req.body; 
     const user_id = req.user.id; // Extract user ID from the authenticated request
 
     // Validate required fields
@@ -17,10 +17,13 @@ router.post('/', authenticateJWT, async (req, res) => {
     }
 
     try {
+
         const result = await pool.query(
-            'INSERT INTO tasks (user_id, title, completed, category_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [user_id, title, completed, category_id, description]
+            'INSERT INTO tasks (user_id, title, completed, category_id, description, is_daily) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [user_id, title, completed, category_id, description, is_daily]       
         );
+        console.log('Creating task with body: ', req.body);
+
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error('Database error:', err);
@@ -31,36 +34,40 @@ router.post('/', authenticateJWT, async (req, res) => {
 
 // Get Tasks for authenticated user with pagination
 router.get('/', authenticateJWT, async (req, res) => {
-    const user_id = req.user.id; // Extract user ID from the authenticated request
+    const user_id = req.user.id;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
-
-    // Calculate offset
     const offset = (page - 1) * limit;
 
+    let query = 'SELECT id, title, completed, category_id, description, is_daily, created_at FROM tasks WHERE user_id = $1';
+    const values = [user_id];
+    let paramIndex = 2;
+
+    if (req.query.completed === 'true' || req.query.completed === 'false') {
+        query += ` AND completed = $${paramIndex}`;
+        values.push(req.query.completed === 'true');
+        paramIndex++;
+    }
+
+    if (req.query.category_id && !isNaN(parseInt(req.query.category_id))) {
+        query += ` AND category_id = $${paramIndex}`;
+        values.push(parseInt(req.query.category_id));
+        paramIndex++;
+    }
+
+    if (req.query.is_daily === 'true' || req.query.is_daily === 'false') {
+        query += ` AND is_daily = $${paramIndex}`;
+        values.push(req.query.is_daily === 'true');
+        paramIndex++;
+    }
+
+    // Add LIMIT and OFFSET at the end
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    values.push(limit, offset);
+
     try {
-        // Base query - include description
-        let query = 'SELECT id, title, completed, category_id, description, created_at FROM tasks WHERE user_id = $1'; // Added description
-        const values = [user_id];
-
-        // Conditional filters
-        if (req.query.completed !== undefined) {
-            query += ' AND completed = $2';
-            values.push(req.query.completed === 'true'); // Convert string to boolean
-        }
-        
-        if (req.query.category_id !== undefined) {
-            query += ' AND category_id = $3';
-            values.push(parseInt(req.query.category_id, 10)); // Ensure it's an integer
-        }
-
-        // Add limit and offset
-        query += ' LIMIT $' + (values.length + 1) + ' OFFSET $' + (values.length + 2);
-        values.push(limit, offset);
-
         const result = await pool.query(query, values);
-        
-        // Get total count of tasks for metadata
+
         const countResult = await pool.query('SELECT COUNT(*) FROM tasks WHERE user_id = $1', [user_id]);
         const totalTasks = parseInt(countResult.rows[0].count, 10);
 
@@ -68,13 +75,14 @@ router.get('/', authenticateJWT, async (req, res) => {
             totalTasks,
             totalPages: Math.ceil(totalTasks / limit),
             currentPage: page,
-            tasks: result.rows, // created_at and description added
+            tasks: result.rows,
         });
     } catch (err) {
-        console.error('Error in GET tasks:', err); // Log error
-        res.status(500).json({ error: 'Server error', details: err.message }); // Send error details
+        console.error('Error in GET tasks:', err);
+        res.status(500).json({ error: 'Server error', details: err.message });
     }
 });
+
 
 
 

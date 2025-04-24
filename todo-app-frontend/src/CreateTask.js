@@ -5,7 +5,9 @@ const CreateTask = ({ userId, addTask }) => {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState(1); // Default category as a number
     const [description, setDescription] = useState(''); // Description optional
+    const [isDaily, setIsDaily] = useState(false);         // Define the isDaily state 
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState(''); // Success Message State
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,6 +32,7 @@ const CreateTask = ({ userId, addTask }) => {
                     category_id: category, // Ensure this is a number
                     completed: false,  // Add completed field
                     description, // Include description
+                    is_daily: isDaily, // if daily is checked.
                 }),
             });
     
@@ -41,9 +44,12 @@ const CreateTask = ({ userId, addTask }) => {
     
             const newTask = await response.json(); // Assuming the new task is returned
             addTask(newTask); // Update the task list
+            setSuccessMessage('Task created successfully!'); //Prepare success message.
+            setTimeout(() => setSuccessMessage(''), 3000); //Clear after a few seconds.
             setTitle(''); // Clear input
             setCategory(1); // Reset to default category
             setDescription(''); // Clear description field
+            setIsDaily(false); // reset
             setError(''); // Reset error
         } catch (error) {
             setError(error.message);
@@ -62,24 +68,41 @@ const CreateTask = ({ userId, addTask }) => {
                     placeholder="Task Title"
                     required
                 />
-                
+
+                {/*Form Category Dropdown*/}
                 <h3>Type:</h3>
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(Number(e.target.value))}
-                >
-                    <option value="1">Work</option>
-                    <option value="2">Personal</option>
-                    <option value="3">Urgent</option>
-                </select>
+                <div className="category-row">
+
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(Number(e.target.value))}
+                    >
+                        <option value="1">Work</option>
+                        <option value="2">Personal</option>
+                        <option value="3">Urgent</option>
+                    </select>
+
+                    {/*Form Daily Checkbox*/}
+                    <label htmlFor="dailyCheckbox" className="checkbox-label">
+                        <input
+                            type="checkbox"
+                            id="dailyCheckbox"
+                            name="dailyCheckbox" 
+                            checked={isDaily}
+                            onChange={(e) => setIsDaily(e.target.checked)}
+                        />
+                        Daily?
+                    </label>
+                </div>
                 
+                {/*Form Description */}
                 <h3>Description:</h3>
                 <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Enter task description (optional)"
                 />
-                
+                {successMessage && <div className="success-message">{successMessage}</div>}
                 <button type="submit">Add Task</button>
                 {error && <div className="text-danger">{error}</div>}
             </form>

@@ -160,3 +160,62 @@ code {
 .modal textarea {
   resize: none; /* Disable resizing if desired */
 }
+
+.task.urgent {
+  background-color: #ffe5e5;
+  border-left: 4px solid #ff4d4d;
+  padding: 10px;
+  border-radius: 6px;
+  
+}
+
+.task.urgent span {
+  color: #d60000;
+  font-weight: bold;
+}
+
+.category-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.category-row select {
+  flex: 1;
+}
+
+.category-row label {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.task-columns {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.task-column {
+  flex: 1;
+  min-width: 300px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.checkbox {
+
+}

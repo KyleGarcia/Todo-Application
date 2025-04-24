@@ -8,6 +8,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.16",
     "pg": "^8.13.0",
+    "react-toastify": "^11.0.5",
     "to-do": "file:"
   },
   "name": "to-do",

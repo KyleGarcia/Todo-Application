@@ -5,7 +5,9 @@ const Tasks = ({ userId, username, handleLogout }) => {
     const [tasks, setTasks] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [totalTasks, setTotalTasks] = useState(0); // To store the total count of tasks
+    const [dailyTasks, setDailyTasks] = useState([]);       //empty array for daily
+    const [regularTasks, setRegularTasks] = useState([]);   //empty array for regular task
+    const [totalTasks, setTotalTasks] = useState(0);        // To store the total count of tasks
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editTask, setEditTask] = useState({ title: '', category_id: 1, description: '', id: null });
@@ -33,7 +35,11 @@ const Tasks = ({ userId, username, handleLogout }) => {
             }
 
             const data = await response.json();
+
             setTasks(data.tasks);
+            setDailyTasks(data.tasks.filter(task => task.is_daily) ); // Split daily tasks
+            setRegularTasks(data.tasks.filter(task => !task.is_daily) );
+            
             setTotalTasks(data.totalTasks); // Set total task count for pagination
         } catch (err) {
             setError(err.message);
@@ -61,11 +67,21 @@ const Tasks = ({ userId, username, handleLogout }) => {
             }
             
             // Update the local tasks state without refetching
-            setTasks((prevTasks) =>
-                prevTasks.map((task) =>
+            setTasks((prevTasks) => {
+                const updatedTasks = prevTasks.map((task) =>
                     task.id === taskId ? { ...task, completed: true } : task
-                )
-            );
+                );
+
+                // Refilter daily and regular tasks
+                setDailyTasks(updatedTasks.filter(task => task.is_daily));
+                setRegularTasks(updatedTasks.filter(task => !task.is_daily));
+                console.log("updated daily tasks:", updatedTasks.filter(task => task.is_daily));
+
+
+                return updatedTasks;
+            });
+
+            
         } catch (err) {
             setError(err.message);
             console.error('Error marking task as completed:', err);
@@ -143,8 +159,10 @@ const Tasks = ({ userId, username, handleLogout }) => {
 
     // Group tasks by completion status
     const groupedTasks = {
-        completed: tasks.filter(task => task.completed),
-        incomplete: tasks.filter(task => !task.completed),
+        dailyIncomplete: tasks.filter(task => task.is_daily && !task.completed),
+        dailyComplete: tasks.filter(task => task.is_daily && task.completed),
+        completed: tasks.filter(task => task.completed && !task.is_daily),
+        incomplete: tasks.filter(task => !task.completed && !task.is_daily),
     };
 
     const totalPages = Math.ceil(totalTasks / limit);
@@ -154,11 +172,45 @@ const Tasks = ({ userId, username, handleLogout }) => {
             <h2>{username}'s Tasks</h2>
             {error && <div className="text-danger">{error}</div>}
             <CreateTask userId={userId} addTask={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
-    
-            <div>
+
+            <div className="task-columns">
+            {/* Daily Tasks Column */}
+            <div className="task-column">
+                <h3>Daily Tasks</h3>
+                {dailyTasks.map((task) => (
+                    <div
+                        className={`task ${Number(task.category_id) === 3 ? 'urgent' : ''}`}
+                        key={task.id}
+                    >
+                        <div className="task-header">
+                            <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+                                {task.title}
+                            </span>
+                            <div>
+                                <button onClick={() => markAsCompleted(task.id)} disabled={task.completed}>
+                                    {task.completed ? 'Completed' : 'Mark as Completed'}
+                                </button>
+                                <button onClick={() => handleEditClick(task)}>Edit</button>
+                                <button onClick={() => deleteTask(task.id)}>Delete</button>
+                            </div>
+                        </div>
+                        <div className="task-details">
+                            <h5>Category: {getCategoryname(task.category_id)} </h5>
+                            <h5>Created At: {new Date(task.created_at).toLocaleString()}</h5>
+                            <h6>Description: {task.description || 'No description provided.'}</h6>
+                        </div>
+                    </div>
+                ))}
+        </div>
+
+            {/* Incomplete Tasks Column */}
+            <div className="task-column">
                 <h3>Incomplete Tasks</h3>
                 {groupedTasks.incomplete.map((task) => (
-                    <div className="task" key={task.id}>
+                    <div
+                        className={`task ${Number(task.category_id) === 3 ? 'urgent' : ''}`}
+                        key={task.id}
+                    >
                         <div className="task-header">
                             <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
                                 {task.title}
@@ -179,11 +231,15 @@ const Tasks = ({ userId, username, handleLogout }) => {
                     </div>
                 ))}
             </div>
-    
-            <div>
+
+            {/* Completed Tasks Column */}
+            <div className="task-column">
                 <h3>Completed Tasks</h3>
                 {groupedTasks.completed.map((task) => (
-                    <div className="task" key={task.id}>
+                    <div
+                        className={`task ${Number(task.category_id) === 3 ? 'urgent' : ''}`}
+                        key={task.id}
+                    >
                         <div className="task-header">
                             <span style={{ textDecoration: 'line-through' }}>
                                 {task.title}
@@ -203,6 +259,8 @@ const Tasks = ({ userId, username, handleLogout }) => {
                     </div>
                 ))}
             </div>
+        </div>
+
 
             {/* Modal for Editing */}
             {isEditing && (

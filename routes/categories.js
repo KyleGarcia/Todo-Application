@@ -67,9 +67,6 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-router.post('/api/login', async (req, res) => {
-    //authenticate user if succesful send token
-    res.json({ token: ''})
-})
+
 
 module.exports = router;
